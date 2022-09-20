@@ -1,7 +1,8 @@
 name: Pizza CI
 
 on:
-  push: ['*']
+  push:
+    branches: [ '*' ]
 
 permissions:
   contents: read
