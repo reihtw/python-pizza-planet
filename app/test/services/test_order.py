@@ -1,37 +1,5 @@
 import pytest
 
-from app.controllers import (IngredientController, OrderController,
-                             SizeController, BeverageController)
-from app.controllers.base import BaseController
-from app.test.utils.functions import get_random_choice, shuffle_list
-
-
-def __order(ingredients: list, beverages: list, size: dict, client_data: dict):
-    ingredients = [ingredient.get('_id') for ingredient in ingredients]
-    beverages = [beverage.get('_id') for beverage in beverages]
-    size_id = size.get('_id')
-    return {
-        **client_data,
-        'beverages': beverages,
-        'ingredients': ingredients,
-        'size_id': size_id
-    }
-
-
-def __create_items(items: list, controller: BaseController):
-    created_items = []
-    for ingredient in items:
-        created_item, _ = controller.create(ingredient)
-        created_items.append(created_item)
-    return created_items
-
-
-def __create_sizes_ingredients_and_beverages(ingredients: list, beverages: list, sizes: list):
-    created_ingredients = __create_items(ingredients, IngredientController)
-    created_sizes = __create_items(sizes, SizeController)
-    created_beverages = __create_items(beverages, BeverageController)
-    return created_sizes if len(created_sizes) > 1 else created_sizes.pop(), created_ingredients, created_beverages
-
 
 def test_create_order_service(create_order):
     order = create_order.json
