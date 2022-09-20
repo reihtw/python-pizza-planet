@@ -5,7 +5,7 @@ from app.test.utils.functions import get_random_string, get_random_price
 
 def test_create_ingredient_service(create_ingredient):
     ingredient = create_ingredient.json
-    pytest.assume(create_ingredient.status.startswith('200'))
+    pytest.assume(create_ingredient.status.startswith('201'))
     pytest.assume(ingredient['_id'])
     pytest.assume(ingredient['name'])
     pytest.assume(ingredient['price'])
