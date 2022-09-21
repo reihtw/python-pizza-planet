@@ -1,5 +1,6 @@
 from typing import Any, List, Optional, Sequence
 
+from sqlalchemy import func, desc
 from sqlalchemy.sql import text, column
 
 from .models import Ingredient, Order, OrderDetail, Size, Beverage, OrderBeverages, db
@@ -89,3 +90,63 @@ class IndexManager(BaseManager):
     @classmethod
     def test_connection(cls):
         cls.session.query(column('1')).from_statement(text('SELECT 1')).all()
+
+
+class ReportManager(BaseManager):
+
+    @classmethod
+    def get_top3_clients(cls):
+        limit = 3
+        query = cls.session.query(
+            Order.client_name,
+            func.sum(Order.total_price).label('total')
+        ).group_by(Order.client_name).order_by(desc('total')).limit(limit).all()
+        return list(map(lambda x: {'client_name': x[0], 'amount_spent': x[1]}, query))
+
+    @classmethod
+    def get_most_profitable_month(cls):
+        query = cls.session.query(
+            func.strftime('%Y-%m', Order.date).label('month'),
+            func.sum(Order.total_price).label('amount')
+        ).group_by('month').order_by(desc('amount')).first()
+
+        if not query:
+            return
+
+        month, amount = query
+        return {
+            'month': month,
+            'amount': amount
+        }
+
+    @classmethod
+    def get_most_wanted_ingredient(cls):
+        query = cls.session.query(
+            OrderDetail.ingredient_id, func.count(OrderDetail.ingredient_id).label('qty')
+        ).group_by(OrderDetail.ingredient_id).order_by(desc('qty')).first()
+
+        if not query:
+            return
+
+        most_wanted_ingredient_id, quantity = query
+        most_wanted_ingredient_id = IngredientManager.get_by_id(most_wanted_ingredient_id)
+        return {
+            'ingredient': most_wanted_ingredient_id,
+            'quantity': quantity
+        }
+
+    @classmethod
+    def get_most_wanted_beverage(cls):
+        query = cls.session.query(
+            OrderBeverages.beverage_id, func.count(OrderBeverages.beverage_id).label('qty')
+        ).group_by(OrderBeverages.beverage_id).order_by(desc('qty')).first()
+
+        if not query:
+            return
+
+        most_wanted_beverage_id, quantity = query
+        most_wanted_beverage_id = BeverageManager.get_by_id(most_wanted_beverage_id)
+        return {
+            'beverage': most_wanted_beverage_id,
+            'quantity': quantity
+        }
