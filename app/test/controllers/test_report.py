@@ -58,9 +58,9 @@ def test_get_report(app, create_orders):
     top3_clients = sorted(zip(clients_purchases_amount.values(), clients_purchases_amount.keys()), reverse=True)[:3]
 
     pytest.assume(error is None)
-    pytest.assume(created_report['most-wanted-ingredient']['ingredient']['_id'] == most_wanted_ingredient_id)
-    pytest.assume(created_report['most-wanted-beverage']['beverage']['_id'] == most_wanted_beverage_id)
-    pytest.assume(created_report['most-profitable-month']['month'] == most_profitable_month)
+    pytest.assume(created_report['most_wanted_ingredient']['ingredient']['_id'] == most_wanted_ingredient_id)
+    pytest.assume(created_report['most_wanted_beverage']['beverage']['_id'] == most_wanted_beverage_id)
+    pytest.assume(created_report['most_profitable_month']['month'] == most_profitable_month)
     for index, client in enumerate(top3_clients):
-        pytest.assume(created_report['top3-clients'][index]['client_name'] == client[1])
-        pytest.assume(created_report['top3-clients'][index]['amount_spent'] == client[0])
+        pytest.assume(created_report['top3_clients'][index]['client_name'] == client[1])
+        pytest.assume(created_report['top3_clients'][index]['amount_spent'] == client[0])
