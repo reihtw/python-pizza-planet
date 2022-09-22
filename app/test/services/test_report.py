@@ -1,7 +1,7 @@
 import pytest
 
 
-def test_generate_report_service(client, report_uri, create_orders):
+def test_get_report_service(client, report_uri, create_orders):
     response = client.get(report_uri)
     report = response.json
 
